@@ -8,13 +8,13 @@ enum Method {
 
 interface RequestOptions {
     url?: URL | RequestInfo
-    responseHandler?: (response: Response) => any
+    responseHandler?: <T>(response: Response) => CustomResponse<T>
     defaultOptions?: RequestInit
 }
 
 export class Request {
 
-    private handleResponse: (response: Response) => any
+    private handleResponse: <T>(response: Response) => CustomResponse<T> | Promise<never>
 
     private defaultOptions: RequestInit
 
@@ -23,16 +23,16 @@ export class Request {
         this.defaultOptions = options?.defaultOptions || {}
     }
 
-    get(url: URL | RequestInfo, options?: RequestInit) {
-        return this._fetch(url, {
+    get<T = any>(url: URL | RequestInfo, options?: RequestInit) {
+        return this._fetch<T>(url, {
             ...this.defaultOptions,
             method: 'GET',
             ...options
         })
     }
 
-    post(url: URL | RequestInfo, body?: string | Object, options?: RequestInit) {
-        return this._fetch(url, {
+    post<T = any>(url: URL | RequestInfo, body?: string | Object, options?: RequestInit) {
+        return this._fetch<T>(url, {
             ...this.defaultOptions,
             method: Method.POST,
             body: this._serialize(body),
@@ -40,8 +40,8 @@ export class Request {
         })
     }
 
-    put(url: URL | RequestInfo, body?: string | Object, options?: RequestInit) {
-        return this._fetch(url, {
+    put<T = any>(url: URL | RequestInfo, body?: string | Object, options?: RequestInit) {
+        return this._fetch<T>(url, {
             ...this.defaultOptions,
             method: Method.PUT,
             body: this._serialize(body),
@@ -49,8 +49,8 @@ export class Request {
         })
     }
 
-    patch(url: URL | RequestInfo, body?: string | Object, options?: RequestInit) {
-        return this._fetch(url, {
+    patch<T = any>(url: URL | RequestInfo, body?: string | Object, options?: RequestInit) {
+        return this._fetch<T>(url, {
             ...this.defaultOptions,
             method: Method.PATCH,
             body: this._serialize(body),
@@ -58,8 +58,8 @@ export class Request {
         })
     }
 
-    delete(url: URL | RequestInfo, options?: RequestInit) {
-        return this._fetch(url, {
+    delete<T = any>(url: URL | RequestInfo, options?: RequestInit) {
+        return this._fetch<T>(url, {
             ...this.defaultOptions,
             method: Method.DELETE,
             ...options
@@ -71,15 +71,19 @@ export class Request {
         return typeof body === 'string' ? body : JSON.stringify(body)
     }
 
-    private _fetch(url: URL | RequestInfo, options?: RequestInit) {
-        return fetch(url, options).then(this.handleResponse)
+    private _fetch<T>(url: URL | RequestInfo, options?: RequestInit) {
+        return fetch(url, options).then(this.handleResponse<T>)
     }
 
-    private _handleResponse(response: Response) {
+    private _handleResponse<T>(response: Response): CustomResponse<T> | Promise<never> {
         if (!response.ok) {
             return Promise.reject(`${response.status} - ${response.statusText}`)
         }
         return response
     }
 
+}
+
+export interface CustomResponse<T> extends Response {
+    json: () => Promise<T>
 }
