@@ -1,17 +1,8 @@
 //  Library
-import { Request } from './utils/request'
+import { request } from './request'
 
 //  Type Definitions
 import type { AddDetails, RetrieveDetails } from './types'
-
-const request = new Request({
-    defaultOptions: {
-        headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'X-Accept': 'application/json'
-        }
-    }
-})
 
 //  ==========
 //  POCKET API
