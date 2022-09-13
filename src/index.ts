@@ -85,7 +85,7 @@ export class PocketClient {
         return this
     }
 
-    add(url: string, details?: { title?: string, tags?: string, tweet_id?: string }) {
+    add(url: string, details?: addDetails) {
         return request.post(ENDPOINT.ADD, {
             url,
             ...details,
@@ -94,4 +94,38 @@ export class PocketClient {
         })
     }
 
+    retrieve(details?: RetrieveDetails) {
+        return request.post(ENDPOINT.RETRIEVE, {
+            count: 5,
+            ...details,
+            consumer_key: this.consumer_key,
+            access_token: this.access_token,
+        })
+    }
+
+}
+
+interface addDetails {
+    title?: string
+    tags?: string
+    tweet_id?: string
+}
+
+interface RetrieveDetails {
+    state?: 'unread' | 'archive' | 'all'
+    favorite?: 0 | 1
+    tag?: string | '_untagged_'
+    contentType?: 'article' | 'video' | 'image'
+    sort?: 'newest' | 'oldest' | 'title' | 'site'
+    detailType?: 'simple' | 'complete'
+    /** Only returns items whose title or url contains the search string */
+    search?: string
+    /** Only return items from a particular domain */
+    domain?: string
+    /** Only return items modified since the given unix timestamp */
+    since?: number
+    /** Only return count number of items */
+    count?: number
+    /** Only used with count; start returning from offset position of results */
+    offset?: number
 }
