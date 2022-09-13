@@ -40,9 +40,6 @@ export class PocketClient {
             throw err
         }
 
-        const authURL = `${ENDPOINT.AUTHORIZE}?${new URLSearchParams({ request_token: this.request_token, redirect_uri: this.redirect_uri }).toString()}`
-        console.log('Authorize at', authURL)
-
         return this.request_token
     }
 
