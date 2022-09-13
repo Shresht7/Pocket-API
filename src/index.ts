@@ -3,7 +3,7 @@ import { request } from './request'
 import { ENDPOINT } from './endpoints'
 
 //  Type Definitions
-import type { AddDetails, RetrieveDetails } from './types'
+import type { ModifyAction, AddDetails, RetrieveDetails } from './types'
 
 //  ==========
 //  POCKET API
@@ -82,6 +82,14 @@ export class PocketClient {
         return request.post(ENDPOINT.RETRIEVE, {
             count: 5,
             ...details,
+            consumer_key: this.consumer_key,
+            access_token: this.access_token,
+        })
+    }
+
+    modify(actions: ModifyAction[keyof ModifyAction][]) {
+        return request.post(ENDPOINT.MODIFY, {
+            actions,
             consumer_key: this.consumer_key,
             access_token: this.access_token,
         })

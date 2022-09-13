@@ -7,5 +7,6 @@ export const ENDPOINT = {
     OAUTH: 'https://getpocket.com/v3/oauth/authorize',
     AUTHORIZE: 'https://getpocket.com/auth/authorize',
     ADD: 'https://getpocket.com/v3/add',
+    MODIFY: 'https://getpocket.com/v3/send',
     RETRIEVE: 'https://getpocket.com/v3/get',
 } as const
