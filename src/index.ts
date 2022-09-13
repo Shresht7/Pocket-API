@@ -1,5 +1,6 @@
 //  Library
 import { request } from './request'
+import { ENDPOINT } from './endpoints'
 
 //  Type Definitions
 import type { AddDetails, RetrieveDetails } from './types'
@@ -7,14 +8,6 @@ import type { AddDetails, RetrieveDetails } from './types'
 //  ==========
 //  POCKET API
 //  ==========
-
-const ENDPOINT = {
-    REQUEST_TOKEN: 'https://getpocket.com/v3/oauth/request',
-    OAUTH: 'https://getpocket.com/v3/oauth/authorize',
-    AUTHORIZE: 'https://getpocket.com/auth/authorize',
-    ADD: 'https://getpocket.com/v3/add',
-    RETRIEVE: 'https://getpocket.com/v3/get',
-}
 
 interface APIRequestOptions {
     consumer_key: string
