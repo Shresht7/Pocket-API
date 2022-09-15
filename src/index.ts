@@ -132,4 +132,56 @@ export class PocketClient {
         })
     }
 
+    get() {
+        let details: RetrieveDetails = {}
+        return {
+            where(constraints: RetrieveDetails) {
+                details = {
+                    ...details,
+                    ...constraints,
+                }
+                return this
+            },
+
+            _build(key: keyof RetrieveDetails, value: RetrieveDetails[typeof key]) {
+                //  @ts-ignore
+                details[key] = value
+                return this
+            },
+
+            state(state: RetrieveDetails['state']) { return this._build('state', state) },
+            unread() { return this.state('unread') },
+            archive() { return this.state('archive') },
+            all() { return this.state('all') },
+
+            favorite(val: RetrieveDetails['favorite'] = 1) { return this._build('favorite', val) },
+            
+            tag(tag: RetrieveDetails['tag']) { return this._build('tag', tag) },
+            untagged() { return this.tag('_untagged_') },
+
+            contentType(type: RetrieveDetails['contentType']) { return this._build('contentType', type) },
+            article() { return this.contentType('article') },
+            video() { return this.contentType('video') },
+            image() { return this.contentType('image') },
+
+            sort(by: RetrieveDetails['sort']) { return this._build('sort', by) },
+            newest() { return this.sort('newest') },
+            oldest() { return this.sort('oldest') },
+
+            detailType(type: RetrieveDetails['detailType']) { return this._build('detailType', type) },
+
+            search(s: RetrieveDetails['search']) { return this._build('search', s) },
+
+            domain(s: RetrieveDetails['domain']) { return this._build('domain', s) },
+
+            since(time: RetrieveDetails['since']) { return this._build('since', time) },
+
+            count(n: RetrieveDetails['count']) { return this._build('count', n) },
+
+            offset(n: RetrieveDetails['offset']) { return this._build('offset', n) },
+
+            items: () => { return this.retrieve(details) },
+        }
+    }
+
 }
