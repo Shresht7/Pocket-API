@@ -3,7 +3,16 @@ import { request } from './request'
 import { ENDPOINT } from './endpoints'
 
 //  Type Definitions
-import type { ModifyAction, AddDetails, RetrieveDetails } from './types'
+import type {
+    RequestToken,
+    AccessToken,
+    AddDetails,
+    AddResponse,
+    RetrieveDetails,
+    RetrieveResponse,
+    ModifyAction,
+    ModifyResponse,
+} from './types'
 
 //  ==========
 //  POCKET API
@@ -31,10 +40,10 @@ export class PocketClient {
         if (this.request_token) { return this.request_token }
 
         try {
-            const response = await request.post(ENDPOINT.REQUEST_TOKEN, {
+            const response = await request.post<RequestToken>(ENDPOINT.REQUEST_TOKEN, {
                 consumer_key: this.consumer_key,
                 redirect_uri: this.redirect_uri,
-            }).then<{ code: string }>(res => res.json())
+            }).then(res => res.json())
             this.request_token = response.code
         } catch (err) {
             throw err
@@ -52,10 +61,10 @@ export class PocketClient {
         if (this.access_token) { return this.access_token }
 
         try {
-            const response = await request.post(ENDPOINT.OAUTH, {
+            const response = await request.post<AccessToken>(ENDPOINT.OAUTH, {
                 consumer_key: this.consumer_key,
                 code: this.request_token,
-            }).then<{ access_token: string }>(res => res.json())
+            }).then(res => res.json())
             this.access_token = response.access_token
         } catch (err) {
             throw err
@@ -69,9 +78,9 @@ export class PocketClient {
         return this
     }
 
-    add(url: string, details?: AddDetails) {
-        return request.post(ENDPOINT.ADD, {
-            url,
+    /** Save an item to the user's Pocket list */
+    add(details?: AddDetails) {
+        return request.post<AddResponse>(ENDPOINT.ADD, {
             ...details,
             consumer_key: this.consumer_key,
             access_token: this.access_token
@@ -79,7 +88,7 @@ export class PocketClient {
     }
 
     retrieve(details?: RetrieveDetails) {
-        return request.post(ENDPOINT.RETRIEVE, {
+        return request.post<RetrieveResponse>(ENDPOINT.RETRIEVE, {
             count: 5,
             ...details,
             consumer_key: this.consumer_key,
@@ -87,8 +96,8 @@ export class PocketClient {
         })
     }
 
-    modify(actions: ModifyAction[keyof ModifyAction][]) {
-        return request.post(ENDPOINT.MODIFY, {
+    modify(actions: ModifyAction[]) {
+        return request.post<ModifyResponse>(ENDPOINT.MODIFY, {
             actions,
             consumer_key: this.consumer_key,
             access_token: this.access_token,
