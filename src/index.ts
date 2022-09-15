@@ -18,22 +18,28 @@ import type {
 //  POCKET API
 //  ==========
 
-interface APIRequestOptions {
+interface Config {
     consumer_key: string
+    request_token?: string
+    access_token?: string
+    redirect_uri?: string
 }
 
 export class PocketClient {
 
     private consumer_key: string
 
-    private redirect_uri: string = 'http://localhost:3000'
+    private redirect_uri: string = 'pocketAuthorizationFinished'
 
     private request_token: string | undefined
 
     private access_token: string | undefined
 
-    constructor(options: APIRequestOptions) {
-        this.consumer_key = options.consumer_key
+    constructor(config: Config) {
+        this.consumer_key = config.consumer_key
+        this.redirect_uri = config.redirect_uri || this.redirect_uri
+        this.request_token = config.request_token
+        this.access_token = config.access_token
     }
 
     async getRequestToken() {
