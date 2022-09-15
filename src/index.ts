@@ -42,7 +42,11 @@ export class PocketClient {
         this.access_token = config.access_token
     }
 
-    async getRequestToken() {
+    /**
+     * Request a request_token using the client's consumer_key.
+     * The user will be redirected to the redirect_uri when authentication flow completes
+     */
+    async getRequestToken(): Promise<string> {
         if (this.request_token) { return this.request_token }
 
         try {
@@ -58,9 +62,21 @@ export class PocketClient {
         return this.request_token
     }
 
+    /** Manually set the request_token */
     setRequestToken(token: string) {
         this.request_token = token
         return this
+    }
+
+    /** Returns the authorization url for the pocket oauth flow */
+    getAuthURL(): string {
+        if (!this.request_token || !this.redirect_uri) {
+            throw new Error('Please provide the request_token and a redirect_uri')
+        }
+        const url = new URL(ENDPOINT.AUTHORIZE)
+        url.searchParams.set('request_token', this.request_token)
+        url.searchParams.set('redirect_uri', this.redirect_uri)
+        return url.toString()
     }
 
     async getAccessToken() {
