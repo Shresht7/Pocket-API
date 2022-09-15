@@ -105,7 +105,7 @@ export class PocketClient {
     }
 
     /** Save an item to the user's Pocket list */
-    add(details?: AddDetails) {
+    add(details: AddDetails) {
         return request.post<AddResponse>(ENDPOINT.ADD, {
             ...details,
             consumer_key: this.consumer_key,
