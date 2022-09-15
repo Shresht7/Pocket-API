@@ -113,6 +113,7 @@ export class PocketClient {
         })
     }
 
+    /** Retrieve items from the user's Pocket list */
     retrieve(details?: RetrieveDetails) {
         return request.post<RetrieveResponse>(ENDPOINT.RETRIEVE, {
             count: 5,
@@ -122,6 +123,7 @@ export class PocketClient {
         })
     }
 
+    /** Modify items from the user's Pocket list */
     modify(actions: ModifyAction[]) {
         return request.post<ModifyResponse>(ENDPOINT.MODIFY, {
             actions,
