@@ -79,8 +79,11 @@ export class PocketClient {
         return url.toString()
     }
 
-    async getAccessToken() {
+    /** Request an access_token using the user's request_token */
+    async getAccessToken(): Promise<string> {
         if (this.access_token) { return this.access_token }
+
+        if (!this.request_token) { throw new Error('Please provide a request_token') }
 
         try {
             const response = await request.post<AccessToken>(ENDPOINT.OAUTH, {
@@ -95,6 +98,7 @@ export class PocketClient {
         return this.access_token
     }
 
+    /** Manually set the access_token */
     setAccessToken(token: string) {
         this.access_token = token
         return this
