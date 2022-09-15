@@ -12,6 +12,7 @@ import type {
     RetrieveResponse,
     ModifyAction,
     ModifyResponse,
+    Action,
 } from './types'
 
 //  ==========
@@ -132,6 +133,21 @@ export class PocketClient {
         })
     }
 
+    bulk = {
+        add: (...items: Action['add'][]) => this.modify(items),
+        archive: (...items: Action['archive'][]) => this.modify(items),
+        readd: (...items: Action['readd'][]) => this.modify(items),
+        favorite: (...items: Action['favorite'][]) => this.modify(items),
+        unfavorite: (...items: Action['unfavorite'][]) => this.modify(items),
+        delete: (...items: Action['delete'][]) => this.modify(items),
+        tags_add: (...items: Action['tags_add'][]) => this.modify(items),
+        tags_remove: (...items: Action['tags_remove'][]) => this.modify(items),
+        tags_replace: (...items: Action['tags_replace'][]) => this.modify(items),
+        tags_clear: (...items: Action['tags_clear'][]) => this.modify(items),
+        tag_rename: (...items: Action['tag_rename'][]) => this.modify(items),
+        tag_delete: (...items: Action['tag_delete'][]) => this.modify(items),
+    }
+
     get() {
         let details: RetrieveDetails = {}
         return {
@@ -155,7 +171,7 @@ export class PocketClient {
             all() { return this.state('all') },
 
             favorite(val: RetrieveDetails['favorite'] = 1) { return this._build('favorite', val) },
-            
+
             tag(tag: RetrieveDetails['tag']) { return this._build('tag', tag) },
             untagged() { return this.tag('_untagged_') },
 
