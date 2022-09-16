@@ -133,18 +133,39 @@ export class PocketClient {
         })
     }
 
+}
+
+export class ExtendedPocketClient extends PocketClient {
+
+    constructor(config: Config) {
+        super(config)
+    }
+
+    /** Perform bulk operations */
     bulk = {
+        /** Add multiple items to the user's Pocket */
         add: (...items: Action['add'][]) => this.modify(items),
+        /** Archive multiple items in the user's Pocket */
         archive: (...items: Action['archive'][]) => this.modify(items),
+        /** Unarchive multiple items in the user's Pocket */
         readd: (...items: Action['readd'][]) => this.modify(items),
+        /** Favorite multiple items in the user's Pocket */
         favorite: (...items: Action['favorite'][]) => this.modify(items),
+        /** Unfavorite multiple items in the user's Pocket */
         unfavorite: (...items: Action['unfavorite'][]) => this.modify(items),
+        /** Delete multiple items in the user's Pocket */
         delete: (...items: Action['delete'][]) => this.modify(items),
+        /** Add multiple tags */
         tags_add: (...items: Action['tags_add'][]) => this.modify(items),
+        /** Remove multiple tags */
         tags_remove: (...items: Action['tags_remove'][]) => this.modify(items),
+        /** Replace multiple tags */
         tags_replace: (...items: Action['tags_replace'][]) => this.modify(items),
+        /** Clear multiple tags */
         tags_clear: (...items: Action['tags_clear'][]) => this.modify(items),
+        /** Rename tags */
         tag_rename: (...items: Action['tag_rename'][]) => this.modify(items),
+        /** Delete tags */
         tag_delete: (...items: Action['tag_delete'][]) => this.modify(items),
     }
 
