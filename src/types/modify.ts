@@ -7,7 +7,7 @@ interface BasicAction<T extends keyof Action> {
     time?: number
 }
 
-interface Action {
+export interface Action {
 
     /** Add a new item to the user's list */
     add: {

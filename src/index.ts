@@ -12,6 +12,7 @@ import type {
     RetrieveResponse,
     ModifyAction,
     ModifyResponse,
+    Action,
 } from './types'
 
 //  ==========
@@ -130,6 +131,94 @@ export class PocketClient {
             consumer_key: this.consumer_key,
             access_token: this.access_token,
         })
+    }
+
+}
+
+export class ExtendedPocketClient extends PocketClient {
+
+    constructor(config: Config) {
+        super(config)
+    }
+
+    /** Perform bulk operations */
+    bulk = {
+        /** Add multiple items to the user's Pocket */
+        add: (...items: Action['add'][]) => this.modify(items),
+        /** Archive multiple items in the user's Pocket */
+        archive: (...items: Action['archive'][]) => this.modify(items),
+        /** Unarchive multiple items in the user's Pocket */
+        readd: (...items: Action['readd'][]) => this.modify(items),
+        /** Favorite multiple items in the user's Pocket */
+        favorite: (...items: Action['favorite'][]) => this.modify(items),
+        /** Unfavorite multiple items in the user's Pocket */
+        unfavorite: (...items: Action['unfavorite'][]) => this.modify(items),
+        /** Delete multiple items in the user's Pocket */
+        delete: (...items: Action['delete'][]) => this.modify(items),
+        /** Add multiple tags */
+        tags_add: (...items: Action['tags_add'][]) => this.modify(items),
+        /** Remove multiple tags */
+        tags_remove: (...items: Action['tags_remove'][]) => this.modify(items),
+        /** Replace multiple tags */
+        tags_replace: (...items: Action['tags_replace'][]) => this.modify(items),
+        /** Clear multiple tags */
+        tags_clear: (...items: Action['tags_clear'][]) => this.modify(items),
+        /** Rename tags */
+        tag_rename: (...items: Action['tag_rename'][]) => this.modify(items),
+        /** Delete tags */
+        tag_delete: (...items: Action['tag_delete'][]) => this.modify(items),
+    }
+
+    get() {
+        let details: RetrieveDetails = {}
+        return {
+            where(constraints: RetrieveDetails) {
+                details = {
+                    ...details,
+                    ...constraints,
+                }
+                return this
+            },
+
+            _build(key: keyof RetrieveDetails, value: RetrieveDetails[typeof key]) {
+                //  @ts-ignore
+                details[key] = value
+                return this
+            },
+
+            state(state: RetrieveDetails['state']) { return this._build('state', state) },
+            unread() { return this.state('unread') },
+            archive() { return this.state('archive') },
+            all() { return this.state('all') },
+
+            favorite(val: RetrieveDetails['favorite'] = 1) { return this._build('favorite', val) },
+
+            tag(tag: RetrieveDetails['tag']) { return this._build('tag', tag) },
+            untagged() { return this.tag('_untagged_') },
+
+            contentType(type: RetrieveDetails['contentType']) { return this._build('contentType', type) },
+            article() { return this.contentType('article') },
+            video() { return this.contentType('video') },
+            image() { return this.contentType('image') },
+
+            sort(by: RetrieveDetails['sort']) { return this._build('sort', by) },
+            newest() { return this.sort('newest') },
+            oldest() { return this.sort('oldest') },
+
+            detailType(type: RetrieveDetails['detailType']) { return this._build('detailType', type) },
+
+            search(s: RetrieveDetails['search']) { return this._build('search', s) },
+
+            domain(s: RetrieveDetails['domain']) { return this._build('domain', s) },
+
+            since(time: RetrieveDetails['since']) { return this._build('since', time) },
+
+            count(n: RetrieveDetails['count']) { return this._build('count', n) },
+
+            offset(n: RetrieveDetails['offset']) { return this._build('offset', n) },
+
+            items: () => { return this.retrieve(details) },
+        }
     }
 
 }
